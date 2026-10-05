@@ -37,7 +37,7 @@ export default function OccupationExplorer({ filters, onSelect }) {
   }, [query, sector, filters.districtId, filters.periodId, filters.horizon])
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-line bg-bg lg:w-[288px] lg:border-l">
+    <aside className="flex h-full min-h-0 w-full flex-col bg-bg">
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-line px-4">
         <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">Trades</h2>
         <span className="text-[10.5px] tabular-nums text-ink-3">{rows.length}</span>

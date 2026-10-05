@@ -7,6 +7,7 @@ import { OCCUPATIONS, findState } from './data/catalog'
 import { buildIntelligence, buildNationalOverview } from './data/engine'
 import HudTop from './components/HudTop'
 import ResizablePanel from './components/ResizablePanel'
+import ResizableTrailing from './components/ResizableTrailing'
 
 const DEFAULT_FILTERS = {
   stateId: 'gj',
@@ -19,6 +20,8 @@ const DEFAULT_FILTERS = {
 export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [view, setView] = useState('map')
+  const [filtersOpen, setFiltersOpen] = useState(true)
+  const [tradesOpen, setTradesOpen] = useState(true)
   const [theme] = useState(() => {
     const stored = localStorage.getItem('lmis-theme')
     if (stored === 'light' || stored === 'dark') return stored
@@ -93,9 +96,24 @@ export default function App() {
         onViewChange={setView}
         filters={filters}
       />
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
-        <ResizablePanel left={leftPanel} right={center} minLeft={276} maxLeft={420} defaultLeft={276} />
-        <OccupationExplorer filters={filters} onSelect={handleSelectOccupation} />
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:overflow-hidden">
+        <ResizablePanel
+          left={leftPanel}
+          right={center}
+          minLeft={276}
+          maxLeft={420}
+          defaultLeft={276}
+          collapsed={!filtersOpen}
+          onToggleCollapsed={() => setFiltersOpen((v) => !v)}
+          leftLabel="Filters"
+        />
+        <ResizableTrailing
+          label="Trades"
+          collapsed={!tradesOpen}
+          onToggleCollapsed={() => setTradesOpen((v) => !v)}
+        >
+          <OccupationExplorer filters={filters} onSelect={handleSelectOccupation} />
+        </ResizableTrailing>
       </div>
     </div>
   )

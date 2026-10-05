@@ -35,7 +35,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
   const total = dist.reduce((a, b) => a + b.value, 0)
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-line bg-bg lg:w-[272px] lg:border-r">
+    <aside className="flex h-full min-h-0 w-full flex-col border-r border-line bg-bg">
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-line px-4">
         <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">Filters</h2>
         <button
@@ -114,7 +114,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
         </div>
 
         {intel && total > 0 && (
-          <details className="border-t border-line-soft pt-3">
+          <details className="group border-t border-line-soft pt-3">
             <summary className="flex cursor-pointer list-none items-center justify-between text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase marker:hidden hover:text-ink-2">
               Talent mix
               <svg
@@ -129,15 +129,19 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
             </summary>
 
             <div className="mt-3">
-              <div className="h-36">
+              {/* Square box so the donut can never be taller than it is wide, and
+                  overflow-hidden so the recharts svg cannot paint over the legend. */}
+              <div className="mx-auto aspect-square w-full max-w-[168px] overflow-hidden">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
+                  <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                     <Pie
                       data={dist}
                       dataKey="value"
                       nameKey="name"
-                      innerRadius={44}
-                      outerRadius={58}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="52%"
+                      outerRadius="92%"
                       paddingAngle={1}
                       stroke="none"
                       isAnimationActive={false}
