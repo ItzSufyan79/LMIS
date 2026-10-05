@@ -48,10 +48,14 @@ export default function ResizablePanel({
   }
 
   return (
-    <div ref={containerRef} className="relative flex h-full w-full min-h-0">
+    <div ref={containerRef} className="relative flex h-full w-full min-h-0 flex-col lg:flex-row">
       {!collapsed && (
         <>
-          <div style={{ width: `${width}px` }} className="flex h-full min-h-0 shrink-0 flex-col">
+          {/* Full width when stacked; a fixed column beside the map on desktop. */}
+          <div
+            style={{ '--panel-w': `${width}px` }}
+            className="flex min-h-0 flex-1 flex-col lg:w-[var(--panel-w)] lg:flex-none lg:shrink-0"
+          >
             {left}
           </div>
 
@@ -65,7 +69,7 @@ export default function ResizablePanel({
               setDragging(true)
             }}
             onKeyDown={onKeyDown}
-            className="group absolute top-0 z-10 h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none"
+            className="group absolute top-0 z-10 hidden h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none lg:block"
             style={{ left: `${width}px` }}
           >
             <span
@@ -80,7 +84,7 @@ export default function ResizablePanel({
             onClick={onToggleCollapsed}
             aria-label={`Collapse ${leftLabel.toLowerCase()} panel`}
             title={`Collapse ${leftLabel.toLowerCase()}`}
-            className="absolute top-1/2 left-0 z-20 flex h-9 w-4 -translate-y-1/2 items-center justify-center border border-r-0 border-line bg-panel text-ink-3 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
+            className="absolute top-1/2 left-0 z-20 hidden h-9 w-4 -translate-y-1/2 items-center justify-center border border-r-0 border-line bg-panel text-ink-3 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none lg:flex"
             style={{ left: `${width}px` }}
           >
             <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden>
@@ -104,7 +108,7 @@ export default function ResizablePanel({
         </button>
       )}
 
-      <div className="flex h-full min-h-0 flex-1 overflow-hidden">{right}</div>
+      <div className="flex min-h-0 flex-1 overflow-hidden">{right}</div>
     </div>
   )
 }

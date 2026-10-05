@@ -3,11 +3,12 @@ const LabourMap = lazy(() => import('../maps/LabourMap'))
 import { buildDistrictRows } from '../data/engine'
 import { OCCUPATIONS } from '../data/catalog'
 import { fmtCompact, signed } from '../utils/format'
-import ResizableRight from '../components/ResizableRight'
+import ResizableTrailing from '../components/ResizableTrailing'
 
 export default function MapViewDraggable({ filters, national, theme, onSelectState, onSelectDistrict }) {
   const stateSelected = Boolean(filters.stateId)
   const [showHow, setShowHow] = useState(false)
+  const [rankingOpen, setRankingOpen] = useState(true)
 
   const rows = useMemo(() => {
     const occupationId = filters.occupationId || OCCUPATIONS[0].id
@@ -131,5 +132,19 @@ export default function MapViewDraggable({ filters, national, theme, onSelectSta
     </div>
   )
 
-  return <ResizableRight left={leftMap} right={rightSidebar} minRight={280} maxRight={420} defaultRight={310} />
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col lg:flex-row">
+      <div className="flex min-h-0 flex-1 overflow-hidden">{leftMap}</div>
+      <ResizableTrailing
+        label="Districts"
+        minWidth={260}
+        maxWidth={420}
+        defaultWidth={300}
+        collapsed={!rankingOpen}
+        onToggleCollapsed={() => setRankingOpen((v) => !v)}
+      >
+        {rightSidebar}
+      </ResizableTrailing>
+    </div>
+  )
 }

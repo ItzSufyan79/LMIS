@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
- * Mirror of ResizablePanel for the trailing sidebar: resizable, and collapsible
- * to nothing so the map gets the full width when the panel is not in use.
+ * Trailing sidebar: resizable by dragging its edge, and collapsible to nothing so
+ * the content beside it can take the full width. Used for the map's districts
+ * panel and for the Trades list.
+ *
+ * Below `lg` the app stacks vertically, so the panel goes full-width and the drag
+ * grip is dropped — but the collapse control still works.
  */
 export default function ResizableTrailing({
   children,
@@ -46,7 +50,7 @@ export default function ResizableTrailing({
   }
 
   return (
-    <div ref={containerRef} className="relative flex h-full min-h-0 shrink-0">
+    <div ref={containerRef} className="relative flex h-full min-h-0 shrink-0 flex-col">
       {!collapsed && (
         <>
           <div
@@ -59,8 +63,7 @@ export default function ResizableTrailing({
               setDragging(true)
             }}
             onKeyDown={onKeyDown}
-            className="group absolute top-0 left-0 z-20 h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none"
-            style={{ left: 0 }}
+            className="group absolute top-0 left-0 z-20 hidden h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none lg:block"
           >
             <span
               className={`absolute top-1/2 left-1/2 h-10 w-px -translate-x-1/2 -translate-y-1/2 transition-colors duration-150 ${
@@ -69,7 +72,11 @@ export default function ResizableTrailing({
             />
           </div>
 
-          <div style={{ width: `${width}px` }} className="flex h-full min-h-0 flex-col border-l border-line">
+          {/* Full width when stacked; fixed column width beside the map on desktop. */}
+          <div
+            style={{ '--panel-w': `${width}px` }}
+            className="flex min-h-0 flex-1 flex-col border-line lg:w-[var(--panel-w)] lg:flex-none lg:border-l"
+          >
             {children}
           </div>
 
