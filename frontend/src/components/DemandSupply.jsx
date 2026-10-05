@@ -1,11 +1,12 @@
 import { Card, SectionHead, Bar, Metric } from './ui'
 import { fmt, pct } from '../utils/format'
+import { useLang } from '../i18n'
 
-function DemandTrend({ rows }) {
+function DemandTrend({ rows, t }) {
   const max = Math.max(...rows.map((r) => r.demand))
   return (
     <div className="mt-5">
-      <p className="mb-2.5 text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase">Openings over time</p>
+      <p className="mb-2.5 text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase">{t('sec.demand.overTime')}</p>
       <ul className="space-y-1.5">
         {rows.map((r) => (
           <li key={r.year} className="flex items-center gap-3">
@@ -24,32 +25,31 @@ function DemandTrend({ rows }) {
 }
 
 export function DemandBlock({ intel }) {
+  const { t } = useLang()
   const { metrics, demandTrend } = intel
   return (
     <Card delay={180} className="overflow-hidden">
-      <SectionHead title="Open roles" hint="What employers are hiring for" />
+      <SectionHead title={t('sec.demand.title')} hint={t('sec.demand.hint')} />
       <div className="px-5 pb-5">
         <div className="flex gap-8 pt-4">
-          <Metric label="Open roles" value={fmt(metrics.demand)} sub="active openings" tone="demand" big />
-          <Metric label="Hiring growth" value={pct(metrics.demandYoY)} sub="year on year" tone="demand" big />
+          <Metric label={t('sec.demand.title')} value={fmt(metrics.demand)} sub={t('sec.demand.active')} tone="demand" big />
+          <Metric label={t('sec.demand.growth')} value={pct(metrics.demandYoY)} sub={t('sec.demand.yoy')} tone="demand" big />
         </div>
-        <DemandTrend rows={demandTrend} />
+        <DemandTrend rows={demandTrend} t={t} />
       </div>
     </Card>
   )
 }
 
 export function SupplyFunnel({ intel }) {
+  const { t } = useLang()
   const { funnel } = intel
   const stages = funnel.stages
   const top = stages[0].value
 
   return (
     <Card delay={200} className="overflow-hidden">
-      <SectionHead
-        title="Why the talent pool is smaller"
-        hint="Each filter removes candidates"
-      />
+      <SectionHead title={t('sec.supply.title')} hint={t('sec.supply.hint')} />
       <div className="space-y-3 px-5 pb-5 pt-4">
         {stages.map((s, i) => {
           const prev = i === 0 ? null : stages[i - 1].value
@@ -78,12 +78,10 @@ export function SupplyFunnel({ intel }) {
         })}
 
         <p className="border-t border-line-soft pt-3 text-[11.5px] leading-relaxed text-ink-2">
-          Effective supply is{' '}
-          <span className="font-semibold tabular-nums text-supply">{fmt(funnel.competencyMatched)}</span> —{' '}
-          <span className="font-semibold tabular-nums text-ink">
-            {((funnel.competencyMatched / funnel.totalTrained) * 100).toFixed(0)}%
-          </span>{' '}
-          of the trained pool survives every filter.
+          {t('sec.supply.effective', {
+            count: fmt(funnel.competencyMatched),
+            pct: `${((funnel.competencyMatched / funnel.totalTrained) * 100).toFixed(0)}%`,
+          })}
         </p>
       </div>
     </Card>

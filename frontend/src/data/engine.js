@@ -1,4 +1,4 @@
-import { findDistrict, findOccupation, STATES } from './catalog'
+import { findDistrict, findOccupation, OCCUPATIONS, STATES } from './catalog'
 import { makeRng, between } from '../utils/prng'
 import { TODAY } from '../utils/format'
 
@@ -45,7 +45,16 @@ function statusFor(ratio) {
   return STATUS.BALANCED
 }
 
-function severityFor(ratio, status) {
+export const SEVERITY_ORDER = ['Stable', 'Monitor', 'Low', 'Medium', 'High']
+
+export function severityScore(ratio, status) {
+  const r = Math.abs(ratio)
+  if (status === STATUS.SHORTAGE) return Math.round(Math.min(100, 55 + r * 150))
+  if (status === STATUS.OVERSUPPLY) return Math.round(Math.min(45, 20 + r * 60))
+  return Math.round(Math.min(50, r * 200))
+}
+
+export function severityFor(ratio, status) {
   const r = Math.abs(ratio)
   if (status === STATUS.BALANCED) return r > 0.07 ? 'Monitor' : 'Stable'
   if (r > 0.3) return 'High'
@@ -407,6 +416,8 @@ export function buildDistrictRows(occupationId, stateId) {
         gap: intel.metrics.gap,
         status: intel.status,
         gapRatio: intel.metrics.gapRatio,
+        severity: intel.severity,
+        severityScore: severityScore(intel.metrics.gapRatio, intel.status),
       }
     })
     .sort((a, b) => b.gap - a.gap)
@@ -415,15 +426,44 @@ export function buildDistrictRows(occupationId, stateId) {
 export function buildNationalOverview(occupationId) {
   return STATES.map((s) => {
     const rows = buildDistrictRows(occupationId, s.id)
+    const demand = rows.reduce((a, b) => a + b.demand, 0)
+    const gap = rows.reduce((a, b) => a + b.gap, 0)
+    const status = statusFor(gap / Math.max(demand, 1))
     return {
       stateId: s.id,
       name: s.name,
-      demand: rows.reduce((a, b) => a + b.demand, 0),
+      demand,
       supply: rows.reduce((a, b) => a + b.supply, 0),
-      gap: rows.reduce((a, b) => a + b.gap, 0),
+      gap,
       districtCount: rows.length,
       districts: rows,
-      status: statusFor(rows.reduce((a, b) => a + b.gap, 0) / Math.max(rows.reduce((a, b) => a + b.demand, 0), 1)),
+      status,
+      severity: severityFor(gap / Math.max(demand, 1), status),
+      severityScore: severityScore(gap / Math.max(demand, 1), status),
     }
   })
+}
+
+/**
+ * Third ranking level: every trade in one district, ranked by severity.
+ * Scoped to a district because a trade only means something against a local pool.
+ */
+export function buildTradeRanking({ districtId, periodId = 'l12', horizon = 12 }) {
+  if (!districtId) return []
+  return OCCUPATIONS.map((o) => {
+    const intel = buildIntelligence({ occupationId: o.id, districtId, periodId, horizon })
+    return {
+      occupationId: o.id,
+      name: o.title,
+      nco: o.nco,
+      sector: o.sector,
+      demand: intel.metrics.demand,
+      supply: intel.metrics.supply,
+      gap: intel.metrics.gap,
+      gapRatio: intel.metrics.gapRatio,
+      status: intel.status,
+      severity: intel.severity,
+      severityScore: severityScore(intel.metrics.gapRatio, intel.status),
+    }
+  }).sort((a, b) => b.severityScore - a.severityScore || b.gap - a.gap)
 }

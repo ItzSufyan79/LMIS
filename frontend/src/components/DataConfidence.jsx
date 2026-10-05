@@ -1,14 +1,16 @@
 import { Chip } from './ui'
+import { useLang } from '../i18n'
 
 export default function DataConfidence({ intel }) {
+  const { t } = useLang()
   const dq = intel.dataQuality
 
   const items = [
-    { label: 'Updated', value: dq.updatedOn.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) },
-    { label: 'Records', value: `${dq.records.toFixed(1)}M` },
-    { label: 'Mapped', value: `${dq.mappingPct.toFixed(1)}%` },
-    { label: 'Missing', value: `${dq.missingPct.toFixed(1)}%` },
-    { label: 'Model', value: dq.model },
+    { label: t('sec.data.updated'), value: dq.updatedOn.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) },
+    { label: t('sec.data.records'), value: `${dq.records.toFixed(1)}M` },
+    { label: t('sec.data.mapped'), value: `${dq.mappingPct.toFixed(1)}%` },
+    { label: t('sec.data.missing'), value: `${dq.missingPct.toFixed(1)}%` },
+    { label: t('sec.data.model'), value: dq.model },
     { label: 'MAE', value: dq.mae.toLocaleString('en-IN') },
     { label: 'RMSE', value: dq.rmse.toLocaleString('en-IN') },
     { label: 'MAPE', value: `${dq.mape.toFixed(1)}%` },
@@ -17,7 +19,7 @@ export default function DataConfidence({ intel }) {
   return (
     <details className="border-t border-line pt-4">
       <summary className="flex cursor-pointer list-none items-center justify-between text-[11px] font-medium tracking-[0.06em] text-ink-3 uppercase marker:hidden hover:text-ink-2 focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none">
-        Data &amp; model
+        {t('sec.data.title')}
         <svg
           className="shrink-0 transition-transform duration-150 open:rotate-180"
           width="10"
@@ -39,11 +41,11 @@ export default function DataConfidence({ intel }) {
       </dl>
 
       <div className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-line-soft pt-3">
-        <span className="text-[10px] text-ink-3">Sources</span>
+        <span className="text-[10px] text-ink-3">{t('sec.data.sources')}</span>
         {dq.sources.map((s) => (
           <Chip key={s}>{s}</Chip>
         ))}
-        <span className="ml-auto text-[10px] text-ink-3">Prototype dataset — figures are illustrative.</span>
+        <span className="ml-auto text-[10px] text-ink-3">{t('sec.data.prototype')}</span>
       </div>
     </details>
   )

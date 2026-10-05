@@ -1,7 +1,9 @@
 import { ArrowLeft } from '@phosphor-icons/react'
 import { StatusPill } from './ui'
+import { useLang } from '../i18n'
 
 export default function ReportHeader({ intel, onBack }) {
+  const { t } = useLang()
   const { occupation, district, state, period, horizon, status, severity } = intel
 
   return (
@@ -11,7 +13,7 @@ export default function ReportHeader({ intel, onBack }) {
         onClick={onBack}
         className="mb-3 inline-flex items-center gap-1.5 text-[11.5px] text-ink-3 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
       >
-        <ArrowLeft size={11} /> Overview
+        <ArrowLeft size={11} /> {t('report.back')}
       </button>
 
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
@@ -24,14 +26,14 @@ export default function ReportHeader({ intel, onBack }) {
             <span className="px-1.5 text-ink-3">·</span>
             {occupation.sector}
             <span className="px-1.5 text-ink-3">·</span>
-            NCO {occupation.nco}
+            {t('report.nco')} {occupation.nco}
           </p>
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
           <StatusPill status={status} />
           <p className="text-[11px] text-ink-3">
-            Severity {severity} · {period.label} · {horizon}M horizon
+            {t('report.severity')} {t(`severity.${severity}`)} · {period.label} · {horizon}M {t('report.horizon')}
           </p>
         </div>
       </div>

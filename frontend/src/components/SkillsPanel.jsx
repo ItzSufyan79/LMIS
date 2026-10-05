@@ -1,19 +1,21 @@
 import { Card, SectionHead, Chip, Bar } from './ui'
 import { fmt } from '../utils/format'
+import { useLang } from '../i18n'
 
 export default function SkillsPanel({ intel }) {
+  const { t } = useLang()
   const { occupation, funnel } = intel
 
   const standards = [
-    { label: 'NCO code', value: occupation.nco },
-    { label: 'QP', value: occupation.qp },
-    { label: 'NOS', value: occupation.nos.join(' · ') },
-    { label: 'NSQF level', value: `Level ${occupation.nsqf}` },
+    { label: t('sec.data.ncoCode'), value: occupation.nco },
+    { label: t('sec.data.qp'), value: occupation.qp },
+    { label: t('sec.data.nos'), value: occupation.nos.join(' · ') },
+    { label: t('sec.data.nsqf'), value: `${t('sec.skills.level')} ${occupation.nsqf}` },
   ]
 
   return (
     <Card delay={220} className="overflow-hidden" collapsible defaultCollapsed>
-      <SectionHead title="What to screen for" hint="Competencies, standards and qualifications" />
+      <SectionHead title={t('sec.skills.title')} hint={t('sec.skills.hint')} />
 
       <div className="grid gap-x-10 gap-y-8 px-5 py-5 lg:grid-cols-2">
         <div>
@@ -43,7 +45,7 @@ export default function SkillsPanel({ intel }) {
 
           <div>
             <p className="mb-2 text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase">
-              Accepted qualifications
+              {t('sec.skills.qualifications')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {occupation.qualifications.map((q) => (
@@ -58,7 +60,7 @@ export default function SkillsPanel({ intel }) {
               {fmt(funnel.competencyMatched)}
             </p>
             <p className="mt-1.5 text-[11px] text-ink-3">
-              candidates assessed job-ready at NSQF level {occupation.nsqf} in {intel.district.name}
+              {t('sec.skills.jobReadyPool')} · {t('sec.data.nsqf')} {occupation.nsqf} · {intel.district.name}
             </p>
           </div>
         </div>

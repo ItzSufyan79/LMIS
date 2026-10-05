@@ -11,6 +11,7 @@ import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import india from '../data/indiaStates.json'
 import { buildDistrictRows } from '../data/engine'
 import { findState } from '../data/catalog'
+import { useLang } from '../i18n'
 
 config.WORKER_URL = maplibreWorkerUrl
 
@@ -98,6 +99,7 @@ export default function LabourMap({
   onSelectDistrict,
   theme,
 }) {
+  const { t } = useLang()
   const holder = useRef(null)
   const mapRef = useRef(null)
   const markersRef = useRef([])
@@ -355,16 +357,15 @@ export default function LabourMap({
       map.off('click', onClick)
       popup.remove()
     }
-  }, [ready, national, selectedStateId, onSelectDistrict, onSelectState])
+  }, [ready, national, selectedStateId, onSelectDistrict, onSelectState, t])
 
   if (failed) {
     return (
       <div className="grid h-full min-h-[420px] place-items-center rounded border border-line bg-panel px-6 text-center">
         <div>
-          <p className="text-[14px] font-medium text-ink">Map unavailable on this device</p>
+          <p className="text-[14px] font-medium text-ink">{t('map.unavailable')}</p>
           <p className="mx-auto mt-2 max-w-[38ch] text-[11.5px] leading-relaxed text-ink-3">
-            The map needs WebGL2. Every number is still available in the ranked list beside it, and the
-            hiring brief opens the same way.
+            {t('map.unavailableBody')}
           </p>
         </div>
       </div>
@@ -383,9 +384,9 @@ export default function LabourMap({
         <div className="pointer-events-auto absolute top-3 left-3 flex flex-col gap-3">
           <div className="flex border border-line bg-panel">
             {[
-              ['gap', 'Gap'],
-              ['demand', 'Open roles'],
-              ['supply', 'Talent'],
+              ['gap', t('map.metric.gap')],
+              ['demand', t('map.metric.demand')],
+              ['supply', t('map.metric.supply')],
             ].map(([id, label], i) => (
               <button
                 key={id}
@@ -415,8 +416,8 @@ export default function LabourMap({
               ))}
             </div>
             <div className="mt-1 flex justify-between text-[8.5px] text-ink-3">
-              <span>{metric === 'gap' ? 'Surplus' : 'Low'}</span>
-              <span>Critical</span>
+              <span>{metric === 'gap' ? t('map.legend.surplus') : t('map.legend.low')}</span>
+              <span>{t('map.legend.critical')}</span>
             </div>
           </div>
         </div>
@@ -427,7 +428,7 @@ export default function LabourMap({
             onClick={() => onSelectState('')}
             className="pointer-events-auto absolute top-3 right-3 border border-line bg-panel px-2.5 py-1.5 text-[11px] font-medium text-ink-2 transition-colors duration-150 hover:border-accent hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
           >
-            All India
+            {t('map.allIndia')}
           </button>
         )}
       </div>

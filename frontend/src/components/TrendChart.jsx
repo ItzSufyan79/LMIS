@@ -14,10 +14,11 @@ import {
 import { ChartLineUp as LineIcon } from '@phosphor-icons/react'
 import { Card, SectionHead } from './ui'
 import { fmt, fmtCompact } from '../utils/format'
+import { useLang } from '../i18n'
 
 const HISTORY_COUNT = 18
 
-function TooltipContent({ active, payload, label }) {
+function TooltipContent({ active, payload, label, t }) {
   if (!active || !payload?.length) return null
   const row = payload[0]?.payload
   return (
@@ -28,20 +29,20 @@ function TooltipContent({ active, payload, label }) {
           className="text-[9.5px] tracking-[0.06em] uppercase"
           style={{ color: row.kind === 'forecast' ? 'var(--accent)' : 'var(--ink-3)' }}
         >
-          {row.kind}
+          {t(`report.chart.tooltip.kind.${row.kind}`)}
         </span>
       </p>
       <dl className="space-y-1 text-[11px] tabular-nums">
         <div className="flex justify-between gap-4">
-          <dt className="text-demand">Open roles</dt>
+          <dt className="text-demand">{t('report.chart.legend.demand')}</dt>
           <dd className="font-semibold text-ink">{fmt(row.demand)}</dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-supply">Job-ready talent</dt>
+          <dt className="text-supply">{t('report.chart.legend.supply')}</dt>
           <dd className="font-semibold text-ink">{fmt(row.supply)}</dd>
         </div>
         <div className="flex justify-between gap-4 border-t border-line-soft pt-1">
-          <dt className="text-ink-3">Talent gap</dt>
+          <dt className="text-ink-3">{t('report.chart.tooltip.gap')}</dt>
           <dd className="font-semibold" style={{ color: row.gap > 0 ? 'var(--gap)' : 'var(--supply)' }}>
             {row.gap > 0 ? '+' : '−'}
             {fmt(Math.abs(row.gap))}
@@ -49,7 +50,7 @@ function TooltipContent({ active, payload, label }) {
         </div>
         {row.kind === 'forecast' && (
           <div className="flex justify-between gap-4 text-[10px] text-ink-3">
-            <dt>95% band</dt>
+            <dt>{t('report.chart.tooltip.band')}</dt>
             <dd>
               {fmtCompact(row.demandLow)}–{fmtCompact(row.demandHigh)}
             </dd>
@@ -61,6 +62,7 @@ function TooltipContent({ active, payload, label }) {
 }
 
 export default function TrendChart({ intel }) {
+  const { t } = useLang()
   const data = useMemo(
     () =>
       intel.series.map((r) => ({
@@ -79,8 +81,8 @@ export default function TrendChart({ intel }) {
     <Card delay={100}>
       <SectionHead
         icon={LineIcon}
-        title="Open roles vs available talent"
-        hint={`${data.length} months · shading is the forecast band`}
+        title={t('report.chart.title')}
+        hint={`${data.length} ${t('report.chart.months')} · ${t('report.chart.shading')}`}
       />
       <div className="h-[300px] px-2 py-4 sm:px-4">
         <ResponsiveContainer width="100%" height="100%">
@@ -102,7 +104,7 @@ export default function TrendChart({ intel }) {
               domain={[0, (dataMax) => Math.ceil((dataMax || 0) * 1.25 / 500) * 500]}
               tickFormatter={(v) => fmtCompact(v)}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--line)' }} />
+            <Tooltip content={<TooltipContent t={t} />} cursor={{ stroke: 'var(--line)' }} />
             <Legend
               iconType="plainline"
               iconSize={14}
@@ -159,7 +161,7 @@ export default function TrendChart({ intel }) {
             <Line
               type="monotone"
               dataKey="demand"
-              name="Open roles"
+              name={t('report.chart.legend.demand')}
               stroke="var(--demand)"
               strokeWidth={1.75}
               dot={false}
@@ -170,7 +172,7 @@ export default function TrendChart({ intel }) {
             <Line
               type="monotone"
               dataKey="supply"
-              name="Job-ready talent"
+              name={t('report.chart.legend.supply')}
               stroke="var(--supply)"
               strokeWidth={1.75}
               dot={false}
@@ -184,7 +186,7 @@ export default function TrendChart({ intel }) {
               stroke="var(--line)"
               strokeDasharray="2 3"
               label={{
-                value: 'Forecast',
+                value: t('report.chart.forecast'),
                 position: 'insideTopRight',
                 fill: 'var(--ink-3)',
                 fontSize: 9.5,

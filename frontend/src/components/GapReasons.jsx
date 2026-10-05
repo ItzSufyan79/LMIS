@@ -1,9 +1,11 @@
 import { Card, SectionHead } from './ui'
+import { useLang } from '../i18n'
 
 export default function GapReasons({ intel }) {
+  const { t } = useLang()
   return (
     <Card delay={240} className="overflow-hidden">
-      <SectionHead title="Why is the gap here?" hint="The metrics behind this verdict" />
+      <SectionHead title={t('sec.reasons.title')} hint={t('sec.reasons.hint')} />
       <ul className="divide-y divide-line-soft">
         {intel.reasons.map((r, i) => (
           <li key={r.title} className="flex gap-4 px-5 py-3.5">

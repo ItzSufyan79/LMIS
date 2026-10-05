@@ -3,6 +3,7 @@ import { OCCUPATIONS, SECTORS } from '../data/catalog'
 import { buildIntelligence } from '../data/engine'
 import { StatusPill } from './ui'
 import { fmtCompact, signed } from '../utils/format'
+import { useLang } from '../i18n'
 
 const SHORT_SECTOR = {
   'Electrical & Construction': 'Electrical',
@@ -11,6 +12,7 @@ const SHORT_SECTOR = {
 }
 
 export default function OccupationExplorer({ filters, onSelect }) {
+  const { t } = useLang()
   const [query, setQuery] = useState('')
   const [sector, setSector] = useState('All')
 
@@ -39,7 +41,7 @@ export default function OccupationExplorer({ filters, onSelect }) {
   return (
     <aside className="flex h-full min-h-0 w-full flex-col bg-bg">
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-line px-4">
-        <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">Trades</h2>
+        <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">{t('panel.trades')}</h2>
         <span className="text-[10.5px] tabular-nums text-ink-3">{rows.length}</span>
       </div>
 
@@ -47,8 +49,8 @@ export default function OccupationExplorer({ filters, onSelect }) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search trade or NCO"
-          aria-label="Search trades"
+          placeholder={t('panel.searchTrade')}
+          aria-label={t('panel.searchTrade')}
           className="w-full border border-line bg-panel px-2.5 py-1.5 text-[12px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none"
         />
 
@@ -76,7 +78,9 @@ export default function OccupationExplorer({ filters, onSelect }) {
 
       <ul className="min-h-0 flex-1 divide-y divide-line-soft overflow-y-auto">
         {rows.length === 0 && (
-          <li className="px-4 py-6 text-center text-[11px] text-ink-3">No trade matches “{query}”.</li>
+          <li className="px-4 py-6 text-center text-[11px] text-ink-3">
+            {t('panel.noTrade')} “{query}”.
+          </li>
         )}
         {rows.map(({ occ, metrics, status }) => {
           const active = filters.occupationId === occ.id
@@ -104,8 +108,12 @@ export default function OccupationExplorer({ filters, onSelect }) {
 
                 {metrics ? (
                   <div className="mt-1 flex items-center gap-3 text-[10.5px] tabular-nums text-ink-3">
-                    <span>NCO {occ.nco}</span>
-                    <span>{fmtCompact(metrics.demand)} open</span>
+                    <span>
+                      {t('report.nco')} {occ.nco}
+                    </span>
+                    <span>
+                      {fmtCompact(metrics.demand)} {t('panel.open')}
+                    </span>
                     <StatusPill status={status} size="sm" />
                   </div>
                 ) : (

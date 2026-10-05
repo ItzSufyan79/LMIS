@@ -1,17 +1,19 @@
 import React from 'react'
+import { useLang } from '../i18n'
 export const STATUS_META = {
-  shortage: { label: 'Shortage', color: 'var(--shortage)' },
-  balanced: { label: 'Balanced', color: 'var(--supply)' },
-  oversupply: { label: 'Oversupply', color: 'var(--oversupply)' },
+  shortage: { key: 'shortage', color: 'var(--shortage)' },
+  balanced: { key: 'balanced', color: 'var(--supply)' },
+  oversupply: { key: 'oversupply', color: 'var(--oversupply)' },
 }
 
 export function StatusPill({ status, size = 'md' }) {
+  const { t } = useLang()
   const meta = STATUS_META[status] || STATUS_META.balanced
   const text = size === 'sm' ? 'text-[10px]' : 'text-[11px]'
   return (
     <span className={`inline-flex items-center gap-1.5 ${text} font-medium text-ink-2`}>
       <span className="size-1.5 shrink-0" style={{ background: meta.color }} aria-hidden />
-      {meta.label}
+      {t(`status.${meta.key}`)}
     </span>
   )
 }

@@ -1,7 +1,9 @@
 import { Card, SectionHead, Bar, Metric } from './ui'
 import { fmt } from '../utils/format'
+import { useLang } from '../i18n'
 
 export default function TrainingCapacity({ intel }) {
+  const { t } = useLang()
   const { seats, funnel, metrics, capacityTrend } = intel
   const supply = metrics.supply
   const max = Math.max(...capacityTrend.map((r) => r.seats), 1)
@@ -9,16 +11,16 @@ export default function TrainingCapacity({ intel }) {
 
   return (
     <Card delay={260} className="overflow-hidden">
-      <SectionHead title="Talent pipeline" hint="Where the next batch of candidates comes from" />
+      <SectionHead title={t('sec.pipeline.title')} hint={t('sec.pipeline.hint')} />
       <div className="px-5 pb-5">
         <div className="flex flex-wrap gap-x-8 gap-y-4 pt-4">
-          <Metric label="Intake / year" value={fmt(seats)} sub="local training capacity" tone="ink" />
-          <Metric label="Certified here" value={fmt(trained)} sub="trained in this trade" tone="ink" />
-          <Metric label="Job-ready now" value={fmt(supply)} sub="usable pool" tone="supply" />
+          <Metric label={t('sec.pipeline.intake')} value={fmt(seats)} sub={t('sec.pipeline.intakeSub')} tone="ink" />
+          <Metric label={t('sec.pipeline.certified')} value={fmt(trained)} sub={t('sec.pipeline.certifiedSub')} tone="ink" />
+          <Metric label={t('sec.pipeline.jobReady')} value={fmt(supply)} sub={t('sec.pipeline.jobReadySub')} tone="supply" />
         </div>
 
         <div className="mt-5">
-          <p className="mb-2.5 text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase">Pipeline growth</p>
+          <p className="mb-2.5 text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase">{t('sec.pipeline.growth')}</p>
           <ul className="space-y-1.5">
             {capacityTrend.map((r) => (
               <li key={r.year} className="flex items-center gap-3">

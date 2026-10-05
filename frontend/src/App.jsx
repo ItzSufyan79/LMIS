@@ -10,9 +10,11 @@ import ResizablePanel from './components/ResizablePanel'
 import ResizableTrailing from './components/ResizableTrailing'
 import { useMediaQuery } from './hooks/useMediaQuery'
 
+// Start at the India level: the app opens on the full-India map with the state
+// severity ranking, then drills down.
 const DEFAULT_FILTERS = {
-  stateId: 'gj',
-  districtId: 'gj-ahmedabad',
+  stateId: '',
+  districtId: '',
   occupationId: '',
   periodId: 'l12',
   horizon: 12,
@@ -51,14 +53,30 @@ export default function App() {
     localStorage.setItem('lmis-theme', theme)
   }, [theme])
 
-  const applyPatch = useCallback(
-    (patch) => {
-      const next = { ...filters, ...patch }
-      setFilters(next)
-      setView(next.occupationId && next.districtId ? 'report' : 'map')
+  const applyPatch = useCallback((patch) => setFilters((f) => ({ ...f, ...patch })), [])
+
+  // Picking a job role is the one action that means "show me the hiring brief".
+  const openTrade = useCallback(
+    (id) => {
+      setFilters((f) => ({ ...f, occupationId: id }))
+      if (filters.districtId) setView('report')
     },
-    [filters],
+    [filters.districtId],
   )
+
+  const handleFilterChange = useCallback(
+    (patch) => {
+      if (Object.hasOwn(patch, 'occupationId') && patch.occupationId !== filters.occupationId) {
+        openTrade(patch.occupationId)
+        return
+      }
+      applyPatch(patch)
+    },
+    [applyPatch, openTrade, filters.occupationId],
+  )
+
+  const handleSelectState = useCallback((id) => applyPatch({ stateId: id, districtId: '' }), [applyPatch])
+  const handleSelectDistrict = useCallback((id) => applyPatch({ districtId: id }), [applyPatch])
 
   const districts = useMemo(() => findState(filters.stateId)?.districts || [], [filters.stateId])
 
@@ -72,19 +90,12 @@ export default function App() {
     return buildIntelligence(filters)
   }, [filters])
 
-  const handleSelectOccupation = useCallback(
-    (id) => {
-      applyPatch({ occupationId: id })
-    },
-    [applyPatch],
-  )
-
   const showReport = view === 'report' && Boolean(intel)
 
   const leftPanel = (
     <FilterPanel
       filters={filters}
-      onChange={applyPatch}
+      onChange={handleFilterChange}
       onReset={() => {
         setFilters(DEFAULT_FILTERS)
         setView('map')
@@ -101,8 +112,9 @@ export default function App() {
       filters={filters}
       national={national}
       theme={theme}
-      onSelectState={(id) => applyPatch({ stateId: id, districtId: '' })}
-      onSelectDistrict={(id) => applyPatch({ districtId: id })}
+      onSelectState={handleSelectState}
+      onSelectDistrict={handleSelectDistrict}
+      onSelectOccupation={openTrade}
       rankingOpen={panels.districts}
       onToggleRanking={() => togglePanel('districts')}
     />
@@ -114,6 +126,7 @@ export default function App() {
         view={view}
         onViewChange={setView}
         filters={filters}
+        reportEnabled={Boolean(intel)}
       />
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
         <ResizablePanel
@@ -134,7 +147,7 @@ export default function App() {
           collapsed={!panels.trades}
           onToggleCollapsed={() => togglePanel('trades')}
         >
-          <OccupationExplorer filters={filters} onSelect={handleSelectOccupation} />
+          <OccupationExplorer filters={filters} onSelect={openTrade} />
         </ResizableTrailing>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { OCCUPATIONS, STATES } from '../data/catalog'
 import { HORIZONS, PERIODS } from '../data/engine'
 import { fmt, pctPlain } from '../utils/format'
+import { useLang } from '../i18n'
 
 const labelCls = 'mb-1.5 block text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase'
 
@@ -31,29 +32,30 @@ function Select({ label, value, onChange, children }) {
 }
 
 export default function FilterPanel({ filters, onChange, onReset, districts, intel }) {
+  const { t } = useLang()
   const dist = intel?.distribution || []
   const total = dist.reduce((a, b) => a + b.value, 0)
 
   return (
     <aside className="flex h-full min-h-0 w-full flex-col border-r border-line bg-bg">
       <div className="flex h-11 shrink-0 items-center justify-between border-b border-line px-4">
-        <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">Filters</h2>
+        <h2 className="text-[11px] font-medium tracking-[0.06em] text-ink uppercase">{t('panel.filters')}</h2>
         <button
           type="button"
           onClick={onReset}
           className="text-[10.5px] text-ink-3 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
         >
-          Reset
+          {t('panel.reset')}
         </button>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 py-4">
         <Select
-          label="State"
+          label={t('panel.state')}
           value={filters.stateId}
           onChange={(v) => onChange({ stateId: v, districtId: '' })}
         >
-          <option value="">All India</option>
+          <option value="">{t('panel.allIndia')}</option>
           {STATES.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -61,8 +63,8 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
           ))}
         </Select>
 
-        <Select label="District" value={filters.districtId} onChange={(v) => onChange({ districtId: v })}>
-          <option value="">All districts</option>
+        <Select label={t('panel.district')} value={filters.districtId} onChange={(v) => onChange({ districtId: v })}>
+          <option value="">{t('panel.allDistricts')}</option>
           {districts.map((d) => (
             <option key={d.id} value={d.id}>
               {d.name}
@@ -71,11 +73,11 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
         </Select>
 
         <Select
-          label="Trade"
+          label={t('panel.trade')}
           value={filters.occupationId}
           onChange={(v) => onChange({ occupationId: v })}
         >
-          <option value="">Select a trade</option>
+          <option value="">{t('panel.selectTrade')}</option>
           {OCCUPATIONS.map((o) => (
             <option key={o.id} value={o.id}>
               {o.title}
@@ -83,7 +85,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
           ))}
         </Select>
 
-        <Select label="Period" value={filters.periodId} onChange={(v) => onChange({ periodId: v })}>
+        <Select label={t('panel.period')} value={filters.periodId} onChange={(v) => onChange({ periodId: v })}>
           {PERIODS.map((p) => (
             <option key={p.id} value={p.id}>
               {p.label}
@@ -92,7 +94,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
         </Select>
 
         <div>
-          <span className={labelCls}>Forecast horizon</span>
+          <span className={labelCls}>{t('panel.horizon')}</span>
           <div className="flex border border-line">
             {HORIZONS.map((h, i) => {
               const active = filters.horizon === h.id
@@ -116,7 +118,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
         {intel && total > 0 && (
           <details className="group border-t border-line-soft pt-3">
             <summary className="flex cursor-pointer list-none items-center justify-between text-[10px] font-medium tracking-[0.06em] text-ink-3 uppercase marker:hidden hover:text-ink-2">
-              Talent mix
+              {t('panel.talentMix')}
               <svg
                 className="shrink-0 transition-transform duration-150 group-open:rotate-180"
                 width="10"
@@ -176,8 +178,7 @@ export default function FilterPanel({ filters, onChange, onReset, districts, int
               </dl>
 
               <p className="mt-3 border-t border-line-soft pt-2.5 text-[10.5px] leading-relaxed text-ink-3">
-                Composition of the local talent pool. The decision metric stays gap = open roles − talent
-                pool.
+                {t('map.pop.talentPool')} · {t('kpi.footnote')}
               </p>
             </div>
           </details>

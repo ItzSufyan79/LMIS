@@ -1,16 +1,18 @@
 import { Card, SectionHead, StatusPill } from './ui'
 import { GAP_THRESHOLD } from '../data/engine'
+import { useLang } from '../i18n'
 
 const TONE = { warn: 'var(--shortage)', ok: 'var(--supply)', info: 'var(--accent)' }
 
 export default function HiringActions({ intel }) {
+  const { t } = useLang()
   const { hiringActions, status, metrics, thresholdRule } = intel
 
   return (
     <Card delay={280} className="overflow-hidden">
       <SectionHead
-        title="What to do about it"
-        hint="Each action names the metric that produced it"
+        title={t('sec.actions.title')}
+        hint={t('sec.actions.hint')}
         action={<StatusPill status={status} size="sm" />}
       />
 
@@ -26,7 +28,7 @@ export default function HiringActions({ intel }) {
                 <p className="text-[12.5px] font-medium text-ink">{o.action}</p>
                 <p className="mt-1 text-[11.5px] leading-relaxed text-ink-2">
                   <span className="font-medium" style={{ color }}>
-                    Why:
+                    {t('sec.actions.why')}
                   </span>{' '}
                   {o.why}
                 </p>
@@ -37,7 +39,7 @@ export default function HiringActions({ intel }) {
       </ol>
 
       <p className="border-t border-line-soft px-5 py-3 text-[11px] leading-relaxed text-ink-3">
-        Verdict rule — <span className="text-ink-2">{thresholdRule}</span>. Here the ratio is{' '}
+        {t('sec.actions.rule')} <span className="text-ink-2">{thresholdRule}</span>. Here the ratio is{' '}
         <span className="tabular-nums text-ink-2">{(metrics.gapRatio * 100).toFixed(1)}%</span> against a ±
         {(GAP_THRESHOLD * 100).toFixed(0)}% band.
       </p>
