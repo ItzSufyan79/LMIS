@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * the content beside it can take the full width. Used for the map's districts
  * panel and for the Trades list.
  *
- * Below `lg` the app stacks vertically, so the panel goes full-width and the drag
+ * Below `md` the app stacks vertically, so the panel goes full-width and the drag
  * grip is dropped — but the collapse control still works.
  */
 export default function ResizableTrailing({
@@ -50,7 +50,7 @@ export default function ResizableTrailing({
   }
 
   return (
-    <div ref={containerRef} className="relative flex h-full min-h-0 shrink-0 flex-col">
+    <div ref={containerRef} className="relative flex min-h-0 shrink-0 flex-col md:h-full">
       {!collapsed && (
         <>
           <div
@@ -63,7 +63,7 @@ export default function ResizableTrailing({
               setDragging(true)
             }}
             onKeyDown={onKeyDown}
-            className="group absolute top-0 left-0 z-20 hidden h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none lg:block"
+            className="group absolute top-0 left-0 z-20 hidden h-full w-2 -translate-x-1/2 cursor-col-resize focus-visible:outline-none md:block"
           >
             <span
               className={`absolute top-1/2 left-1/2 h-10 w-px -translate-x-1/2 -translate-y-1/2 transition-colors duration-150 ${
@@ -75,7 +75,7 @@ export default function ResizableTrailing({
           {/* Full width when stacked; fixed column width beside the map on desktop. */}
           <div
             style={{ '--panel-w': `${width}px` }}
-            className="flex min-h-0 flex-1 flex-col border-line lg:w-[var(--panel-w)] lg:flex-none lg:border-l"
+            className="flex min-h-0 flex-1 flex-col border-line md:w-[var(--panel-w)] md:flex-none md:border-l"
           >
             {children}
           </div>

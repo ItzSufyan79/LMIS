@@ -12,7 +12,7 @@ import DataConfidence from '../components/DataConfidence'
 
 export default function OccupationReport({ intel, onBack, onChange }) {
   return (
-    <div className="mx-auto flex h-full w-full max-w-[1280px] flex-col gap-8 overflow-y-auto px-5 py-6 lg:px-8 lg:py-8">
+    <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-8 px-5 py-6 md:h-full md:overflow-y-auto lg:px-8 lg:py-8">
       <ReportHeader intel={intel} onBack={onBack} />
 
       <KpiRow intel={intel} />

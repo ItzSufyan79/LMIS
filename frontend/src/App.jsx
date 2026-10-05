@@ -8,6 +8,7 @@ import { buildIntelligence, buildNationalOverview } from './data/engine'
 import HudTop from './components/HudTop'
 import ResizablePanel from './components/ResizablePanel'
 import ResizableTrailing from './components/ResizableTrailing'
+import { useMediaQuery } from './hooks/useMediaQuery'
 
 const DEFAULT_FILTERS = {
   stateId: 'gj',
@@ -20,8 +21,24 @@ const DEFAULT_FILTERS = {
 export default function App() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [view, setView] = useState('map')
-  const [filtersOpen, setFiltersOpen] = useState(true)
-  const [tradesOpen, setTradesOpen] = useState(true)
+  // Three side panels plus a usable map need ~1600px, so the two secondary panels start
+  // closed below that; on phones Filters starts closed too, leaving the map — the thing
+  // the page is about — as the first thing on screen.
+  // These are only defaults: an explicit toggle is remembered per panel, otherwise the
+  // breakpoint would override the user and a collapsed panel could never be reopened.
+  const isWide = useMediaQuery('(min-width: 1600px)')
+  const isCompact = useMediaQuery('(max-width: 767px)')
+  const defaults = { filters: !isCompact, districts: isWide, trades: isWide }
+  const [overrides, setOverrides] = useState({})
+
+  const panels = {
+    filters: overrides.filters ?? defaults.filters,
+    districts: overrides.districts ?? defaults.districts,
+    trades: overrides.trades ?? defaults.trades,
+  }
+
+  const togglePanel = (key) =>
+    setOverrides((o) => ({ ...o, [key]: !(o[key] ?? defaults[key]) }))
   const [theme] = useState(() => {
     const stored = localStorage.getItem('lmis-theme')
     if (stored === 'light' || stored === 'dark') return stored
@@ -86,6 +103,8 @@ export default function App() {
       theme={theme}
       onSelectState={(id) => applyPatch({ stateId: id, districtId: '' })}
       onSelectDistrict={(id) => applyPatch({ districtId: id })}
+      rankingOpen={panels.districts}
+      onToggleRanking={() => togglePanel('districts')}
     />
   )
 
@@ -96,21 +115,24 @@ export default function App() {
         onViewChange={setView}
         filters={filters}
       />
-      <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
         <ResizablePanel
           left={leftPanel}
           right={center}
-          minLeft={276}
+          minLeft={240}
           maxLeft={420}
           defaultLeft={276}
-          collapsed={!filtersOpen}
-          onToggleCollapsed={() => setFiltersOpen((v) => !v)}
+          collapsed={!panels.filters}
+          onToggleCollapsed={() => togglePanel('filters')}
           leftLabel="Filters"
         />
         <ResizableTrailing
           label="Trades"
-          collapsed={!tradesOpen}
-          onToggleCollapsed={() => setTradesOpen((v) => !v)}
+          minWidth={230}
+          maxWidth={420}
+          defaultWidth={288}
+          collapsed={!panels.trades}
+          onToggleCollapsed={() => togglePanel('trades')}
         >
           <OccupationExplorer filters={filters} onSelect={handleSelectOccupation} />
         </ResizableTrailing>

@@ -5,10 +5,17 @@ import { OCCUPATIONS } from '../data/catalog'
 import { fmtCompact, signed } from '../utils/format'
 import ResizableTrailing from '../components/ResizableTrailing'
 
-export default function MapViewDraggable({ filters, national, theme, onSelectState, onSelectDistrict }) {
+export default function MapViewDraggable({
+  filters,
+  national,
+  theme,
+  onSelectState,
+  onSelectDistrict,
+  rankingOpen,
+  onToggleRanking,
+}) {
   const stateSelected = Boolean(filters.stateId)
   const [showHow, setShowHow] = useState(false)
-  const [rankingOpen, setRankingOpen] = useState(true)
 
   const rows = useMemo(() => {
     const occupationId = filters.occupationId || OCCUPATIONS[0].id
@@ -111,10 +118,10 @@ export default function MapViewDraggable({ filters, national, theme, onSelectSta
   )
 
   const leftMap = (
-    <div className="h-full min-h-[420px] w-full p-0 lg:p-4">
+    <div className="h-full min-h-[52vh] w-full p-0 md:p-4">
       <Suspense
         fallback={
-          <div className="grid h-full min-h-[420px] place-items-center rounded border border-line bg-panel">
+          <div className="grid h-full min-h-[52vh] place-items-center rounded border border-line bg-panel">
             <span className="text-[11px] text-ink-3">Loading map…</span>
           </div>
         }
@@ -133,15 +140,15 @@ export default function MapViewDraggable({ filters, national, theme, onSelectSta
   )
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col lg:flex-row">
+    <div className="flex h-full min-h-0 w-full flex-col md:flex-row">
       <div className="flex min-h-0 flex-1 overflow-hidden">{leftMap}</div>
       <ResizableTrailing
         label="Districts"
-        minWidth={260}
+        minWidth={240}
         maxWidth={420}
         defaultWidth={300}
         collapsed={!rankingOpen}
-        onToggleCollapsed={() => setRankingOpen((v) => !v)}
+        onToggleCollapsed={onToggleRanking}
       >
         {rightSidebar}
       </ResizableTrailing>
