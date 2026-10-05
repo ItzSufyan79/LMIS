@@ -1,9 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Map as MapLibreMap, NavigationControl, Popup, Marker } from 'maplibre-gl'
+import { Map as MapLibreMap, NavigationControl, Popup, Marker, config } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+// MapLibre derives its worker URL from `import.meta.url`, which after bundling points at
+// this chunk rather than node_modules — the derived path 404s in production. Emit the
+// worker as its own asset and hand MapLibre the real URL.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import india from '../data/indiaStates.json'
 import { buildDistrictRows } from '../data/engine'
 import { findState } from '../data/catalog'
+
+config.WORKER_URL = maplibreWorkerUrl
 
 const ARCGIS = 'https://server.arcgisonline.com/ArcGIS/rest/services'
 const TILES = {
