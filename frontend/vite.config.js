@@ -8,4 +8,5 @@ export default defineConfig({
   // rewrites that URL and the worker 404s in dev only.
   optimizeDeps: { exclude: ['maplibre-gl'] },
   build: { chunkSizeWarningLimit: 1200 },
+  worker: { format: 'es' },
 })

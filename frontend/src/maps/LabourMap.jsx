@@ -2,9 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Map as MapLibreMap, NavigationControl, Popup, Marker, config } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 // MapLibre derives its worker URL from `import.meta.url`, which after bundling points at
-// this chunk rather than node_modules — the derived path 404s in production. Emit the
-// worker as its own asset and hand MapLibre the real URL.
-import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
+// this chunk rather than node_modules — the derived path 404s in production. Dev was
+// unaffected, which is why this only surfaced on Vercel.
+// `?worker&url` makes Vite bundle the worker *and* its `./maplibre-gl-shared.mjs`
+// dependency into emitted assets; a plain `?url` copies the file verbatim and leaves
+// that import dangling, so the worker still fails to load.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import india from '../data/indiaStates.json'
 import { buildDistrictRows } from '../data/engine'
 import { findState } from '../data/catalog'
