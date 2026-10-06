@@ -1,5 +1,7 @@
 import { Moon, Sun } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
 import { useLang, LANGUAGES } from '../i18n'
+import { useAuth } from '../auth'
 
 const PERIOD_LABEL = {
   l3: 'L3',
@@ -26,8 +28,8 @@ export default function HudTop({
   theme = 'dark',
   onToggleTheme,
 }) {
-  const { t } = useLang()
-  const { lang, setLanguage } = useLang()
+  const { t, lang, setLanguage } = useLang()
+  const { user, signOut } = useAuth()
   const { stateId = '', districtId = '', periodId = 'l12', horizon = 12 } = filters
 
   return (
@@ -38,6 +40,27 @@ export default function HudTop({
       </div>
 
       <div className="flex shrink-0 items-center gap-5">
+        {user ? (
+          <div className="hidden items-center gap-2 lg:flex">
+            <span className="max-w-[160px] truncate text-[11px] text-ink-2">{user.name}</span>
+            <button
+              type="button"
+              onClick={signOut}
+              title={t('auth.signOut')}
+              className="text-[11px] text-ink-3 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
+            >
+              {t('auth.signOut')}
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            className="hidden shrink-0 text-[11.5px] text-ink-2 transition-colors duration-150 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none lg:block"
+          >
+            {t('auth.signIn')}
+          </Link>
+        )}
+
         {stateId && (
           <p className="hidden truncate text-[11.5px] text-ink-2 md:max-w-[320px]">
             {stateId.replace(/^in-?/, '').toUpperCase()}

@@ -3,9 +3,13 @@ dist
 dist-ssr
 *.local
 .DS_Store
+
+# Secrets never belong in the repo. The example file is the only exception,
+# and it must be re-included after the wildcard below.
 .env
 .env.*
-!.env.example
-npm-debug.log*
 .vercel
-.env*
+
+!.env.example
+
+npm-debug.log*
