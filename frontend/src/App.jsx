@@ -41,7 +41,7 @@ export default function App() {
 
   const togglePanel = (key) =>
     setOverrides((o) => ({ ...o, [key]: !(o[key] ?? defaults[key]) }))
-  const [theme] = useState(() => {
+  const [theme, setTheme] = useState(() => {
     const stored = localStorage.getItem('lmis-theme')
     if (stored === 'light' || stored === 'dark') return stored
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -127,6 +127,8 @@ export default function App() {
         onViewChange={setView}
         filters={filters}
         reportEnabled={Boolean(intel)}
+        theme={theme}
+        onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
       />
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
         <ResizablePanel

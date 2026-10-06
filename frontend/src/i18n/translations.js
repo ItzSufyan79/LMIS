@@ -174,6 +174,8 @@ const en = {
   'sec.data.nsqf': 'NSQF level',
 
   'lang.label': 'Language',
+  'theme.switch': 'Switch to light theme',
+  'theme.switchBack': 'Switch to dark theme',
 }
 
 const hi = {
@@ -343,6 +345,8 @@ const hi = {
   'sec.data.nsqf': 'NSQF स्तर',
 
   'lang.label': 'भाषा',
+  'theme.switch': 'हल्की थीम पर जाएँ',
+  'theme.switchBack': 'गहरी थीम पर जाएँ',
 }
 
 const gu = {
@@ -512,6 +516,8 @@ const gu = {
   'sec.data.nsqf': 'NSQF સ્તર',
 
   'lang.label': 'ભાષા',
+  'theme.switch': 'આછા થીમ પર જાઓ',
+  'theme.switchBack': 'ઘેરા થીમ પર જાઓ',
 }
 
 export const DICTIONARIES = { en, hi, gu }

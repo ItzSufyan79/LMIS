@@ -1,3 +1,4 @@
+import { Moon, Sun } from '@phosphor-icons/react'
 import { useLang, LANGUAGES } from '../i18n'
 
 const PERIOD_LABEL = {
@@ -17,7 +18,14 @@ function titleCase(id) {
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-export default function HudTop({ view = 'map', onViewChange, filters = {}, reportEnabled = false }) {
+export default function HudTop({
+  view = 'map',
+  onViewChange,
+  filters = {},
+  reportEnabled = false,
+  theme = 'dark',
+  onToggleTheme,
+}) {
   const { t } = useLang()
   const { lang, setLanguage } = useLang()
   const { stateId = '', districtId = '', periodId = 'l12', horizon = 12 } = filters
@@ -67,6 +75,16 @@ export default function HudTop({ view = 'map', onViewChange, filters = {}, repor
             <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           </svg>
         </div>
+
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          title={theme === 'dark' ? t('theme.switch') : t('theme.switchBack')}
+          aria-label={theme === 'dark' ? t('theme.switch') : t('theme.switchBack')}
+          className="flex h-[30px] w-[30px] shrink-0 items-center justify-center border border-line text-ink-3 transition-colors duration-150 hover:bg-panel-3 hover:text-ink focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
+        >
+          {theme === 'dark' ? <Sun size={14} weight="regular" aria-hidden /> : <Moon size={14} weight="regular" aria-hidden />}
+        </button>
 
         <nav className="flex shrink-0 border border-line" aria-label="View">
           {[
